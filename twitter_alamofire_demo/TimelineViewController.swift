@@ -18,14 +18,23 @@ class TimelineViewController: UIViewController, UITableViewDataSource, UITableVi
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.estimatedRowHeight = 50
         // Initialize a UIRefreshControl
-        let refreshControl = UIRefreshControl()
+        //let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshControlAction(_:)), for: UIControlEvents.valueChanged)
         // add refresh control to table view
         tableView.insertSubview(refreshControl, at: 0)
+        fetchTweets()
     }
 
+    /*override func viewWillAppear(_ animated: Bool)
+    {
+        fetchTweets()
+    }
+    */
     @IBAction func onLogoutButton(_ sender: Any)
     {
         APIManager.shared.logout()
@@ -46,18 +55,26 @@ class TimelineViewController: UIViewController, UITableViewDataSource, UITableVi
     func fetchTweets()
     {
         APIManager.shared.getHomeTimeLine { (tweets, error) in
-            if let error = error
+            if let tweets = tweets
+            {
+                self.tweets = tweets
+                self.tableView.reloadData()
+                if self.refreshControl.isRefreshing
+                {
+                    self.refreshControl.endRefreshing()
+                }
+            }
+            else if let error = error
             {
                 print(error.localizedDescription)
             }
-            else
-            {
-                self.tweets = tweets!
-                self.tableView.reloadData()
-            }
         }
-        self.refreshControl.endRefreshing()
     }
+    
+    /*@objc func didPullToRefresh(_ refreshControl: UIRefreshControl)
+    {
+        fetchTweets()
+    }*/
     
     // Makes a network request to get updated data
     // Updates the tableView with the new data

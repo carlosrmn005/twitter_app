@@ -7,20 +7,22 @@
 //
 
 import UIKit
-//import AlamofireImage
+import AlamofireImage
+
 class TweetCell: UITableViewCell
 {
  
+    
+    @IBOutlet weak var tweetLabel: UILabel!
     @IBOutlet weak var profilePicImageView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
-    @IBOutlet weak var tweetLabel: UILabel!
-    @IBOutlet weak var replyCountLabel: UILabel!
     @IBOutlet weak var retweetCountLabel: UILabel!
-    @IBOutlet weak var favoriteCountLabel: UILabel!
+    @IBOutlet weak var replyCountLabel: UILabel!
+    @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var retweetButton: UIButton!
     @IBOutlet weak var favoriteButton: UIButton!
+    @IBOutlet weak var favoriteCountLabel: UILabel!
     
     var tweet: Tweet?
     {
@@ -33,7 +35,7 @@ class TweetCell: UITableViewCell
             replyCountLabel.text = "0"
             retweetCountLabel.text = "\((tweet?.retweetCount)!)"
             favoriteCountLabel.text = "\((tweet?.favoriteCount)!)"
-            //profilePicImageView.af_setImage(withURL: (tweet?.user?.profilePicture)!)
+            profilePicImageView.af_setImage(withURL: (tweet?.user?.profilePicture)!)
         }
         
     }
@@ -47,7 +49,9 @@ class TweetCell: UITableViewCell
             }
         }
     }
-    //////////////
+    
+    
+    //Classmates helped me out with favoriting and retweeting part.  They provided me with this snippet as well as the snippet in the APIManager class
     @IBAction func didTapFavorite(_ sender: Any)
     {
         if tweet?.favorited == true
@@ -57,8 +61,34 @@ class TweetCell: UITableViewCell
             favoriteButton.setImage(UIImage(named: "favor-icon"), for: .normal)
             performTweetAction(APIManager.TweetAction.unfavorite)
         }
+        else
+        {
+            tweet?.favorited = true
+            tweet?.favoriteCount! += 1
+            favoriteButton.setImage(UIImage(named: "favor-icon-red"), for: .normal)
+            performTweetAction(APIManager.TweetAction.favorite)
+        }
+        favoriteCountLabel.text = "\((tweet?.favoriteCount)!)"
     }
-    ////////////
+    
+    @IBAction func didTapRetweet(_ sender: Any)
+    {
+        if tweet?.retweeted == true
+        {
+            tweet?.retweeted = false
+            tweet?.retweetCount! -= 1
+            retweetButton.setImage(UIImage(named: "retweet-icon"), for: .normal)
+            performTweetAction(APIManager.TweetAction.unretweet)
+        }
+        else
+        {
+            tweet?.retweeted = true
+            tweet?.retweetCount! += 1
+            retweetButton.setImage(UIImage(named: "retweet-icon-green"), for: .normal)
+            performTweetAction(APIManager.TweetAction.retweet)
+        }
+        retweetCountLabel.text = "\((tweet?.retweetCount)!)"
+    }
     
     override func awakeFromNib()
     {

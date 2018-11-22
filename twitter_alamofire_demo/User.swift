@@ -13,6 +13,7 @@ class User: NSObject
     // MARK: Properties
     var name: String?
     var screenName: String?
+    var profilePicture: URL?
     
     // Add any additional properties here
     static var current: User?
@@ -21,7 +22,10 @@ class User: NSObject
     {
         name = dictionary["name"] as? String
         screenName = dictionary["screen_name"] as? String
-        
+        if let profilePic: String = dictionary["profile_image_url_https"] as? String {
+            //print(profile)
+            profilePicture = URL(string: profilePic)!
+        }
         // Initialize any other properties
     }
 }
