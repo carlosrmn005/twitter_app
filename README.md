@@ -38,7 +38,7 @@ Please list two areas of the assignment you'd like to **discuss further with you
 
 Here's a walkthrough of implemented user stories:
 
-<img src='https://imgur.com/KZn7R47.gif' title='Twitter App' width='1074' alt='Twitter Walkthrough' />
+<img src='https://imgur.com/Mq4T8eB.gif' title='Twitter App' width='1074' alt='Twitter Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
