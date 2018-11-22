@@ -12,11 +12,12 @@ import OAuthSwift
 import OAuthSwiftAlamofire
 import KeychainAccess
 
-class APIManager: SessionManager {
+class APIManager: SessionManager
+{
     
     // MARK: TODO: Add App Keys
-    static let consumerKey = "YOUR_KEY_HERE"
-    static let consumerSecret = "YOUR_SECRET_HERE"
+    static let consumerKey = "uFTmFW66AAMEUwx3rZlZDMSCf"
+    static let consumerSecret = "LtlxIoQpBvHcqjpSMIA9Gs2E9wCJbr7xkx9EpSdBYoNedaZUgh"
 
     static let requestTokenURL = "https://api.twitter.com/oauth/request_token"
     static let authorizeURL = "https://api.twitter.com/oauth/authorize"
@@ -38,19 +39,29 @@ class APIManager: SessionManager {
                 if let error = error {
                     failure(error)
                 } else if let user = user {
-                    print("Welcome \(user.name)")
+                    print("Welcome \(String(describing: user.name))")
                     
                     // MARK: TODO: set User.current, so that it's persisted
                     
                     success()
                 }
             })
-        }) { (error) in
+        }){ (error) in
             failure(error)
         }
     }
     
-
+    func logout()
+    {
+        // 1. Clear current user
+        //User.current = nil
+        
+        // TODO: 2. Deauthorize OAuth tokens
+        clearCredentials()
+        // 3. Post logout notification
+        NotificationCenter.default.post(name: NSNotification.Name("didLogout"), object: nil)
+    }
+    
     func getCurrentAccount(completion: @escaping (User?, Error?) -> ()) {
         request(URL(string: "https://api.twitter.com/1.1/account/verify_credentials.json")!)
             .validate()
@@ -68,12 +79,44 @@ class APIManager: SessionManager {
                 }
         }
     }
+    
+    //Classmate provided this snippet for me
+    enum TweetAction: String {
+        case favorite = "https://api.twitter.com/1.1/favorites/create.json"
+        case unfavorite = "https://api.twitter.com/1.1/favorites/destroy.json"
+        case retweet = "https://api.twitter.com/1.1/statuses/retweet/"
+        case unretweet = "https://api.twitter.com/1.1/statuses/unretweet/"
+        case reply = "https://api.twitter.com/1.1/statuses/update.json"
+        case composeNew
+    }
+    
+    func performTweetAction(_ tweet: Tweet, _ action: TweetAction, completion: @escaping (Tweet?, Error?) -> ()) {
+        var urlString = ""
+        var parameters = [String: Int?]()
+        if action == .retweet || action == .unretweet {
+            urlString = "\(action.rawValue)\((tweet.id)!).json"
+            
+        }else {
+            parameters = ["id": tweet.id]
+            urlString = action.rawValue
+        }
         
+        request(urlString, method: .post, parameters: parameters, encoding: URLEncoding.queryString).validate().responseJSON { (response) in
+            if response.result.isSuccess,
+                let tweetDictionary = response.result.value as? [String: Any] {
+                let tweet = Tweet(dictionary: tweetDictionary)
+                completion(tweet, nil)
+            } else {
+                completion(nil, response.result.error)
+            }
+        }
+    }
+    
     func getHomeTimeLine(completion: @escaping ([Tweet]?, Error?) -> ()) {
 
         // This uses tweets from disk to avoid hitting rate limit. Comment out if you want fresh
         // tweets,
-        if let data = UserDefaults.standard.object(forKey: "hometimeline_tweets") as? Data {
+        /*if let data = UserDefaults.standard.object(forKey: "hometimeline_tweets") as? Data {
             let tweetDictionaries = NSKeyedUnarchiver.unarchiveObject(with: data) as! [[String: Any]]
             let tweets = tweetDictionaries.flatMap({ (dictionary) -> Tweet in
                 Tweet(dictionary: dictionary)
@@ -81,7 +124,7 @@ class APIManager: SessionManager {
 
             completion(tweets, nil)
             return
-        }
+        }*/
 
         request(URL(string: "https://api.twitter.com/1.1/statuses/home_timeline.json")!, method: .get)
             .validate()

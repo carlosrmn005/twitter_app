@@ -8,10 +8,20 @@
 
 import UIKit
 
-class User: NSObject {
+class User: NSObject
+{
+    // MARK: Properties
     var name: String?
+    var screenName: String?
     
-    init(dictionary: [String : Any]) {
-        super.init()
+    // Add any additional properties here
+    static var current: User?
+    
+    init(dictionary: [String: Any])
+    {
+        name = dictionary["name"] as? String
+        screenName = dictionary["screen_name"] as? String
+        
+        // Initialize any other properties
     }
 }

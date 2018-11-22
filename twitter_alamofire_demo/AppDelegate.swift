@@ -18,6 +18,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // MARK: TODO: Check for logged in user
         
+        //Logout User
+        NotificationCenter.default.addObserver(forName: Notification.Name("didLogout"), object: nil, queue: OperationQueue.main)
+        { (Notification) in
+            print("Logout notification received")
+            // TODO: Load and show the login view controller
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let loginViewController = storyboard.instantiateViewController(withIdentifier: "LoginViewController")
+            self.window?.rootViewController = loginViewController
+        }
+        
         return true
     }
     
