@@ -36,6 +36,25 @@ class TweetCell: UITableViewCell
             retweetCountLabel.text = "\((tweet?.retweetCount)!)"
             favoriteCountLabel.text = "\((tweet?.favoriteCount)!)"
             profilePicImageView.af_setImage(withURL: (tweet?.user?.profilePicture)!)
+            
+            if tweet?.retweeted == true
+            {
+                retweetButton.setImage(UIImage(named: "retweet-icon-green"), for: .normal)
+            }
+            else
+            {
+                retweetButton.setImage(UIImage(named: "retweet-icon"), for: .normal)
+            }
+            
+            favoriteButton.setImage(UIImage(named: "favor-icon"), for: .normal)
+            if tweet?.favorited == true
+            {
+                favoriteButton.setImage(UIImage(named: "favor-icon-red"), for: .normal)
+            }
+            else
+            {
+                favoriteButton.setImage(UIImage(named: "favor-icon"), for: .normal)
+            }
         }
         
     }

@@ -6,15 +6,19 @@
 //  Copyright © 2018 Charles Hieger. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
-class User: NSObject
+class User
 {
     // MARK: Properties
     var name: String?
     var screenName: String?
     var profilePicture: URL?
-    
+    var followers_count: Int?
+    var friends_count: Int?
+    var statuses_count: Int?
+    var description: String?
+   
     // Add any additional properties here
     static var current: User?
     
@@ -22,10 +26,14 @@ class User: NSObject
     {
         name = dictionary["name"] as? String
         screenName = dictionary["screen_name"] as? String
-        if let profilePic: String = dictionary["profile_image_url_https"] as? String {
-            //print(profile)
+        if let profilePic: String = dictionary["profile_image_url_https"] as? String
+        {
             profilePicture = URL(string: profilePic)!
         }
         // Initialize any other properties
+        followers_count = dictionary["followers_count"] as? Int
+        friends_count = dictionary["friends_count"] as? Int
+        statuses_count = dictionary["statuses_count"] as? Int
+        description = dictionary["description"] as? String
     }
 }

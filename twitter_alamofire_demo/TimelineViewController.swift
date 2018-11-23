@@ -30,11 +30,6 @@ class TimelineViewController: UIViewController, UITableViewDataSource, UITableVi
         fetchTweets()
     }
 
-    /*override func viewWillAppear(_ animated: Bool)
-    {
-        fetchTweets()
-    }
-    */
     @IBAction func onLogoutButton(_ sender: Any)
     {
         APIManager.shared.logout()
@@ -84,6 +79,18 @@ class TimelineViewController: UIViewController, UITableViewDataSource, UITableVi
     {
         refreshControl.beginRefreshing()
         fetchTweets()
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
+    {
+        if segue.identifier == "tweetDetailSegue"
+        {
+            let cell = sender as! TweetCell
+            let destination = segue.destination as! DetailViewController
+            let indexPath = tableView.indexPath(for: cell)!
+            destination.tweet = tweets[indexPath.row]
+            cell.setSelected(false, animated: false)
+        }
     }
     
     override func didReceiveMemoryWarning()

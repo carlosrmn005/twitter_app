@@ -162,7 +162,40 @@ class APIManager: SessionManager
     // MARK: TODO: Un-Retweet
     
     // MARK: TODO: Compose Tweet
-    
+    //These compose Tweets methods were made and provided by my classmate to use along side TweetAction
+    //This one is used for when we reply to another users tweet
+    func composeTweet(_ text: String, _ tweet: Tweet, _ action: TweetAction, completion: @escaping (Tweet?, Error?) -> ()) {
+        let urlString = "https://api.twitter.com/1.1/statuses/update.json"
+        var parameters = [String: Any]()
+        if(action == TweetAction.reply) {
+            parameters = ["status": text,"in_reply_to_status_id": tweet.id! ]
+        } else if (action == TweetAction.composeNew) {
+            
+        }
+        oauthManager.client.post(urlString, parameters: parameters, headers: nil, body: nil, success: { (response: OAuthSwiftResponse) in
+            let tweetDictionary = try! response.jsonObject() as! [String: Any]
+            let tweet = Tweet(dictionary: tweetDictionary)
+            completion(tweet, nil)
+        }) { (error: OAuthSwiftError) in
+            completion(nil, error.underlyingError)
+            
+        }
+    }
+    //This one is used when we want to make a new tweet
+    func composeNewTweet(_ text: String, _ tweet: User, _ action: TweetAction, completion: @escaping (User?, Error?) -> ())
+    {
+        let urlString = "https://api.twitter.com/1.1/statuses/update.json"
+        let parameters = ["status": text]
+        oauthManager.client.post(urlString, parameters: parameters, headers: nil, body: nil, success:
+            { (response: OAuthSwiftResponse) in
+            let tweetDictionary = try! response.jsonObject() as! [String: Any]
+            let tweet = User(dictionary: tweetDictionary)
+            completion(tweet, nil)
+        })
+        { (error: OAuthSwiftError) in
+            completion(nil, error.underlyingError)
+        }
+    }
     // MARK: TODO: Get User Timeline
     
     
