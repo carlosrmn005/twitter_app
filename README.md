@@ -1,4 +1,4 @@
-# Project 6 - *Flix*
+# Project 6 - *Twitter App*
 
 Time spent: **10** hours spent in total
 
